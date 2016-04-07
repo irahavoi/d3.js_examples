@@ -9,6 +9,7 @@
 	<script type="text/javascript">
 		d3.select("svg")
 			.append("line")
+			.attr("id", "connection")
 			.attr("x1", 20)
 			.attr("y1", 20)
 			.attr("x2", 400)
@@ -19,6 +20,7 @@
 
 		d3.select("svg")
 			.append("circle")
+			.attr("id", "moon")
 			.attr("r", 20)
 			.attr("cx", 20)
 			.attr("cy", 20)
@@ -27,12 +29,15 @@
 		
 		d3.select("svg")
 			.append("text")
+			.attr("id", "a")
 			.attr("x", 20)
 			.attr("y", 20)
-			.text("Hello");	
+			.style("opacity", 0)
+			.text("Hello World");	
 
 		d3.select("svg")
 			.append("circle")
+			.attr("id", "world")
 			.attr("r", 100)
 			.attr("cx", 400)
 			.attr("cy", 400)
@@ -40,9 +45,51 @@
 
 		d3.select("svg")
 			.append("text")
+			.attr("id", "b")
 			.attr("x", 400)
 			.attr("y", 400)
-			.text("World");				
+			.style("opacity", 0)
+			.text("Uh, hi");
+
+		d3.select("svg")
+			.append("text")
+			.attr("id", "omnomnom")
+			.attr("x", 150)
+			.attr("y", 150)
+			.style("opacity", 0)
+			.text("Omnomnom");
+	
+
+		d3.select("#a").transition().delay(1000).style("opacity", 1);
+		d3.select("#a").transition().delay(1500).style("opacity", 0);	
+		d3.select("#b").transition().delay(1500).style("opacity", 1);
+		d3.select("#b").transition().delay(2000).style("opacity", 0);
+
+		d3.select("#moon").transition().delay(2500)
+			.attr("cx", 150)
+			.attr("cy", 150);
+
+		d3.select("#connection").transition().delay(2500)
+			.attr("x1", 150)
+			.attr("y1", 150);
+
+		d3.select("#world").transition().delay(3000)
+			.attr("cx", 150)
+			.attr("cy", 150);
+			
+		d3.select("#connection").transition().delay(3000)
+			.attr("x2", 150)
+			.attr("y2", 150);
+
+		d3.select("#omnomnom").transition().delay(3300)
+			.style("opacity", 1);
+
+		d3.select("#omnomnom").transition().delay(4300)
+			.style("opacity", 0)		
+
+					
+
+		d3.select					
 	</script>
 </body>
 </html>
