@@ -54,8 +54,8 @@
 		d3.select("svg")
 			.append("text")
 			.attr("id", "omnomnom")
-			.attr("x", 150)
-			.attr("y", 150)
+			.attr("x", 200)
+			.attr("y", 200)
 			.style("opacity", 0)
 			.text("Omnomnom");
 	
@@ -66,25 +66,28 @@
 		d3.select("#b").transition().delay(2000).style("opacity", 0);
 
 		d3.select("#moon").transition().delay(2500)
-			.attr("cx", 150)
-			.attr("cy", 150);
+			.attr("cx", 200)
+			.attr("cy", 200);
 
 		d3.select("#connection").transition().delay(2500)
-			.attr("x1", 150)
-			.attr("y1", 150);
+			.attr("x1", 200)
+			.attr("y1", 200);
 
 		d3.select("#world").transition().delay(3000)
-			.attr("cx", 150)
-			.attr("cy", 150);
+			.duration(3000)
+			.attr("cx", 200)
+			.attr("cy", 200);
 			
 		d3.select("#connection").transition().delay(3000)
-			.attr("x2", 150)
-			.attr("y2", 150);
+			.duration(3000)
+			.attr("x2", 200)
+			.attr("y2", 200);
 
-		d3.select("#omnomnom").transition().delay(3300)
+		d3.select("#omnomnom").transition().delay(6300)
+			.duration("3000")
 			.style("opacity", 1);
 
-		d3.select("#omnomnom").transition().delay(4300)
+		d3.select("#omnomnom").transition().delay(9300)
 			.style("opacity", 0)		
 
 					
