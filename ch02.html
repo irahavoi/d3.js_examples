@@ -5,12 +5,18 @@
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.js"></script>
 </head>
 <body>
-	<svg style="width: 500px; height: 125px; border: 1px lightgray solid; background: silver"></svg>
+	<svg style="width: 500px; height: 125px; border: 1px lightgray solid; background: deepskyblue"></svg>
     <p>each DOM element created below is now associated with a data item. Try this: document.getElementsByClassName("cities")[0].__data__</p>
 	<script type="text/javascript">
-		setInterval(animateBarChart, 2000);
+		var minHeight = 0,
+			maxHeight = 100000,
+			canvasHeight = 125,
+			numbers = [15,2,13,28,56,12,24,88,34,45,43,32,56,25,45,45,43,12,56,100,34,23,120,12,34,76,94,42,12,56,82,34,123,120,34,45,65,21,10,2,45,32,45,67,90,120,25,67,23,12],
+			yScale = d3.scale.linear().domain([minHeight, maxHeight]).range([0,125]);
 
+		setInterval(animateBarChart, 2000);
 		renderBarChart();
+		
 		d3.csv("data/cities.csv", function(error, data){
 		  renderCities(data);
 		});
@@ -29,7 +35,7 @@
 			console.log("rendering a simple barchart..")
 			d3.select("svg")
 				.selectAll("rect")
-				.data([15,2,13,28,56,12,24,88,34,45,43,32,56,25,45,45,43,12,56,100,34,23,120,12,34,76,94,42,12,56,82,34,123,120,34,45,65,21,10,2,45,32,45,67,90,120,25,67,23,12])
+				.data(numbers)
 				.enter()
 				.append("rect")
 				.attr("width", 10)
@@ -48,7 +54,9 @@
 				.transition()
 				.duration(500)
 				.ease("linear")
-				.attr("height", function(d){return Math.floor((Math.random() * 100) + 1)});
+				.attr("height", function(d){
+					return yScale(Math.floor((Math.random() * maxHeight) + 1));
+				});
 		}
 	</script>
 </body>
