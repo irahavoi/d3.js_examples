@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>D3.js</title>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.js"></script>
+</head>
+<body>
+	<!--svg style="width: 500px; height: 500px; border: 1px lightgray solid;"></svg-->
+	<script type="text/javascript">
+		d3.csv("data/cities.csv", function(error, data){
+		  renderCities(data);
+		});
+
+		function renderCities(data){
+			d3.select("body")
+		     .selectAll("div.cities")
+		     .data(data)
+		     .enter()
+		     .append("div")
+		     .attr("class", "cities")
+		     .html(function(d,i){return d.label;});
+		}
+	</script>
+</body>
+</html>
