@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>D3.js</title>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.js"></script>
+</head>
+<body>
+	<svg style="width: 500px; height: 125px; border: 1px lightgray solid;"></svg>
+	<script type="text/javascript">
+		var minHeight = 0,
+			maxHeight = 365,
+			canvasHeight = 125,
+			numbers = [100,45,13,28,56,100,24,88,34,45,43,32,56,25,45,45,43,12,56,100,34,350,120,12,34,76,94,42,12,56,82,34,123,120,34,45,65,21,10,2,45,32,45,67,90,120,25,67,23,12],
+			yScale = d3.scale.linear().domain([minHeight, maxHeight]).range([0,125]),
+			bars;
+
+		renderBarChart(numbers);
+
+		function renderBarChart(nums){
+			console.log("rendering a simple barchart..")
+			d3.select("svg")
+				.selectAll("rect")
+				.data(nums)
+				.enter()
+				.append("rect")
+				.attr("width", 10)
+				.attr("height", function(d){return yScale(d);})
+				.attr("x", function(d,i){return i * 10;})
+				.attr("y", function(d){return canvasHeight - yScale(d);})
+				.attr("fill", "yellow")
+				.attr("stroke", "red")
+				.style("stroke-width", "1px")
+				.style("opacity", .25)
+
+		}
+
+		var currentBar = 0;
+
+		function sort(){
+			if(!bars){
+				bars = d3.select("svg").selectAll("rect")[0];
+			}
+
+			if(bars.length - 1 > currentBar){
+				swapBars(currentBar, ++currentBar);	
+			} else{
+				currentBar = 0;
+				sort();
+			}
+		}
+
+		function swapBars(barIndex1, barIndex2){
+			var result = false;
+			var bar1 = bars[barIndex1];
+			var bar2 = bars[barIndex2];
+
+			var bar1Data = d3.select(bar1);
+			var bar2Data = d3.select(bar2);
+
+			var x1 = bar1Data.attr("x");
+			var x2 = bar2Data.attr("x");
+			var height1 = parseFloat(bar1Data.attr("height"));
+			var height2 = parseFloat(bar2Data.attr("height"));
+
+			if(height1 > height2){
+				d3.select(bar1).transition().duration(5).ease("linear").attr("x", x2);
+				d3.select(bar2).transition().duration(5).ease("linear").attr("x", x1).each("end", sort);
+				bars[barIndex2] = bar1;
+				bars[barIndex1] = bar2;
+				swapped = true;
+			} else{
+				sort();
+			}
+
+			return swapped;
+
+
+		}
+
+	</script>
+</body>
+</html>
