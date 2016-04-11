@@ -9,7 +9,7 @@
 	<div class="well">
 		<svg style="width: 500px; height: 125px; border: 1px lightgray solid;"></svg>
 		<div>
-			<button type="button" class="btn btn-primary" onclick="sort()">Bubble Sort</button>
+			<button type="button" class="btn btn-primary startBubbleSort" onclick="startSorting()">Bubble Sort</button>
 		</div>
 	</div>
 	<script type="text/javascript">
@@ -38,6 +38,11 @@
 				.style("stroke-width", "1px")
 				.style("opacity", .25)
 
+		}
+
+		function startSorting(){
+			d3.select("button.startBubbleSort").attr("disabled", "disabled");
+			sort();
 		}
 
 		var currentBar = 0;
