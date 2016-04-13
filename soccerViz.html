@@ -9,12 +9,15 @@
 <body>
 	<div class="well">
 		<svg style="width: 500px; height: 500px; border: 1px lightgray solid;"></svg>
+		<div id="controls"></div>
 	</div>
 	<script type="text/javascript">
 			function createSoccerViz(){
 				d3.csv("data/worldcup.csv", function(data){
+					console.log("got some data: ");
 					console.log(data);
 					overallTeamViz(data);
+					addControls(data);
 				});
 			}
 
@@ -43,6 +46,35 @@
 					.style("text-anchor", "middle")
 					.attr("y", 30)
 					.text(function(d){return d.team;});		
+			}
+
+			function addControls(data){
+				var dataKeys = d3.keys(data[0]).filter(function(el){ return el != "team" && el != "region";});
+				console.log("Available data keys: " + dataKeys);
+
+				d3.select("#controls")
+					.selectAll("button.teams")
+					.data(dataKeys)
+					.enter()
+					.append("button")
+					.attr("class", "teams btn btn-primary")
+					.on("click", buttonClick)
+					.html(function(d){return d;});
+
+				function buttonClick(dataPoint){
+					var maxValue = d3.max(data, function(d){
+						return parseFloat(d[dataPoint]);});
+
+					console.log("Max " + dataPoint + ": " + maxValue);
+
+					var radiusScale = d3.scale.linear()
+							.domain([0, maxValue]).range([2, 20]);
+
+					d3.selectAll("g.overallG").select("circle")
+						.attr("r", function(d){
+							return radiusScale(d[dataPoint]);
+						})		
+				}	
 			}
 
 	</script>
