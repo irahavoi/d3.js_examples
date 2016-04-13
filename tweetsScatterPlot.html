@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>D3.js</title>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.js"></script>
+</head>
+<body>
+	<svg style="width: 500px; height: 500px; border: 1px lightgray solid; background: deepskyblue"></svg>
+	<script type="text/javascript">
+		d3.json("data/tweets.json", function(error, data){
+		  renderTweets(data.tweets);
+		});
+
+		function renderTweets(tweets){
+			console.log(tweets);
+			tweets.forEach(function(el){
+				el.impact = el.favorites.length + el.retweets.length;
+				el.tweetTime = new Date(el.timestamp); 
+			});
+
+			var maxImpact = d3.max(tweets, function(el){
+				return el.impact;
+			});
+
+			console.log("Max impact is " + maxImpact);
+
+			var startEnd = d3.extent(tweets, function(el){
+				return el.tweetTime;
+			}); //d3.extent() <-- gets min and max values.
+
+			console.log('Earliest and latest tweet time:');
+			console.log(startEnd);
+
+			var timeRamp = d3.time.scale().domain(startEnd).range([20, 480]);
+			var yScale = d3.scale.linear().domain([0, maxImpact]).range([0, 460]);
+			var radiusScale = d3.scale.linear().domain([0, maxImpact]).range([1, 20]);
+			var colorScale = d3.scale.linear().domain([0, maxImpact]).range(["white", "#990000"]);
+
+			//Visualize!
+			d3.select("svg")
+				.selectAll("circle")
+				.data(tweets)
+				.enter()
+				.append("circle")
+				.attr("r", function(d){return radiusScale(d.impact)})
+				.attr("cx", function(d, i){return timeRamp(d.tweetTime)})
+				//.attr("cy", function(d){return 480 - yScale(d.impact)})
+				.attr("cy", function(d){return 460})
+				.style("fill", function(d){return colorScale(d.impact)})
+				.style("stroke", "black")
+				.style("stroke-width", "1px");
+
+			d3.select("svg")
+				.selectAll("circle")
+				.transition()
+				.duration(500).ease("linear")
+				.attr("cy", function(d){return 480 - yScale(d.impact)});
+
+		}
+
+	</script>
+</body>
+</html>

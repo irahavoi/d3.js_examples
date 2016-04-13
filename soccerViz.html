@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>D3.js</title>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/d3ia.css">
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+</head>
+<body>
+	<div class="well">
+		<svg style="width: 500px; height: 500px; border: 1px lightgray solid;"></svg>
+	</div>
+	<script type="text/javascript">
+			function createSoccerViz(){
+				d3.csv("data/worldcup.csv", function(data){
+					console.log(data);
+					overallTeamViz(data);
+				});
+			}
+
+			function overallTeamViz(data){
+				d3.select("svg")
+					.append("g")
+					.attr("id", "teamsG")
+					.attr("transform", "translate(50, 300)")
+					.selectAll("g")
+					.data(data)
+					.enter()
+					.append("g")
+					.attr("class", "overallG")
+					.attr("transform", function(d,i){
+						return "translate(" + (i * 50) + ", 0)";
+					});
+
+				var teamG = d3.selectAll("g.overallG");
+				
+				teamG
+					.append("circle")
+					.attr("r", 20);
+
+				teamG
+					.append("text")
+					.style("text-anchor", "middle")
+					.attr("y", 30)
+					.text(function(d){return d.team;});		
+			}
+
+	</script>
+</body>
+</html>
