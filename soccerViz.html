@@ -18,7 +18,21 @@
 					console.log(data);
 					overallTeamViz(data);
 					addControls(data);
+					loadBoard();
 				});
+			}
+
+			function loadBoard(){
+				d3.text("modal.html", function(data){
+					console.log("Loaded an html fragment:");
+					console.log(data);
+					d3.select("body").append("div").attr("id", "modal").html(data);
+				})
+			}
+
+			function teamClick(d){
+				d3.selectAll("td.data").data(d3.values(d))
+					.html(function(p){return p;});
 			}
 
 			function overallTeamViz(data){
@@ -39,13 +53,46 @@
 				
 				teamG
 					.append("circle")
+					.attr("r", 0)
+					.transition()
+					.delay(function(d,i){return i * 200})
+					.duration(500)
+					.attr("r", 40)
+					.transition()
+					.duration(500)
 					.attr("r", 20);
 
 				teamG
 					.append("text")
 					.style("text-anchor", "middle")
 					.attr("y", 30)
-					.text(function(d){return d.team;});		
+					.text(function(d){return d.team;});
+
+				teamG.on("click", teamClick);	
+				teamG.on("mouseover", highlightRegion);
+				teamG.on("mouseout", unhighlightRegion);
+
+
+			}
+
+			function highlightRegion(d){
+				d3.select(this)
+					.select("text")
+					.classed("active", true)
+					.attr("y", -30);
+
+				d3.selectAll("g.overallG")
+					.select("circle")
+					.each(function(p,i){
+						p.region == d.region ? d3.select(this).classed("active", true) : d3.select(this).classed("inactive", true)
+					});
+
+				this.parentElement.appendChild(this);
+			}
+
+			function unhighlightRegion(d){
+				d3.select(this).select("text").classed("active", false).attr("y", 30);
+				d3.selectAll("g.overallG").select("circle").attr("class", "");
 			}
 
 			function addControls(data){
@@ -70,10 +117,19 @@
 					var radiusScale = d3.scale.linear()
 							.domain([0, maxValue]).range([2, 20]);
 
+					var ybRamp = d3.scale.linear()
+						.interpolate(d3.interpolateHcl)
+						.domain([0, maxValue]).range(["blue", "red"]);		
+
 					d3.selectAll("g.overallG").select("circle")
+						.transition()
+						.duration(1000)
 						.attr("r", function(d){
 							return radiusScale(d[dataPoint]);
-						})		
+						})
+						.style("fill",function(d){
+							return ybRamp(d[dataPoint]);
+						});		
 				}	
 			}
 
