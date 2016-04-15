@@ -27,6 +27,12 @@
 				var xScale = d3.scale.linear().domain(xExtent).range([0,500]);
 				var yScale = d3.scale.linear().domain(yExtent).range([0,500]);
 
+				var yAxis = d3.svg.axis().scale(yScale).orient("right");
+				var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+
+				d3.select("svg").append("g").attr("id", "yAxisG").call(yAxis);
+				d3.select("svg").append("g").attr("id", "xAxisG").call(xAxis);
+
 				d3.select("svg").selectAll("circle")
 					.data(scatterData).enter()
 					.append("circle")
