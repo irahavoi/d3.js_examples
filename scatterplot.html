@@ -24,14 +24,20 @@
 				var xExtent = d3.extent(scatterData, function(d){return d.salary;});
 				var yExtent = d3.extent(scatterData, function(d){return d.friends;});
 
-				var xScale = d3.scale.linear().domain(xExtent).range([0,500]);
-				var yScale = d3.scale.linear().domain(yExtent).range([0,500]);
+				var xScale = d3.scale.linear().domain(xExtent).range([0,480]);
+				var yScale = d3.scale.linear().domain(yExtent).range([0,480]);
 
-				var yAxis = d3.svg.axis().scale(yScale).orient("right");
-				var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+				var yAxis = d3.svg.axis().scale(yScale).orient("right").ticks(16).tickSize(480);
+				var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(4).tickSize(480);
 
 				d3.select("svg").append("g").attr("id", "yAxisG").call(yAxis);
 				d3.select("svg").append("g").attr("id", "xAxisG").call(xAxis);
+
+				d3.select("#xAxisG").attr("transform", "translate(0, 0)");
+				d3.select("#yAxisG").attr("transform", "translate(0, 0)");
+
+				d3.selectAll("path.domain").style("fill", "none").style("stroke", "black");
+				d3.selectAll("line").style("stroke", "black");
 
 				d3.select("svg").selectAll("circle")
 					.data(scatterData).enter()
@@ -41,7 +47,7 @@
 					.attr("cy", function(d){return yScale(d.friends);});
 
 
-
+    
 
 			}
 
