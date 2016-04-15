@@ -3,7 +3,7 @@
 <head>
     <title>D3.js</title>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.js"></script>
-    <link rel="stylesheet" type="text/css" href="css/d3ia.css">
+    <!--<link rel="stylesheet" type="text/css" href="css/d3ia.css">-->
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 </head>
 <body onload="createScatterPlot()">
@@ -21,12 +21,22 @@
             ];
 
 			function createScatterPlot(){
+				var xExtent = d3.extent(scatterData, function(d){return d.salary;});
+				var yExtent = d3.extent(scatterData, function(d){return d.friends;});
+
+				var xScale = d3.scale.linear().domain(xExtent).range([0,500]);
+				var yScale = d3.scale.linear().domain(yExtent).range([0,500]);
+
 				d3.select("svg").selectAll("circle")
 					.data(scatterData).enter()
 					.append("circle")
 					.attr("r", 5)
-					.attr("cx", function(d,i){return i * 10;})
-					.attr("cy", function(d){return d.friends});
+					.attr("cx", function(d,i){return xScale(d.salary);})
+					.attr("cy", function(d){return yScale(d.friends);});
+
+
+
+
 			}
 
 	</script>
