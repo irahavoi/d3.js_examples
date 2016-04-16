@@ -8,5 +8,17 @@ path.domain{
 }
 
 line{
-	stroke: black;
+	stroke: pink;
+}
+
+circle.tweets{
+	fill: blue;
+}
+
+circle.retweets{
+	fill: green;
+}
+
+circle.favorites{
+	fill: red;
 }
