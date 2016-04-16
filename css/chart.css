@@ -1,0 +1,12 @@
+line{
+	shape-rendering: crispEdges;
+}
+
+path.domain{
+	fill : none;
+	stroke: black;
+}
+
+line{
+	stroke: black;
+}
