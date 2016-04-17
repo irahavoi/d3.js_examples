@@ -9,22 +9,33 @@
 </head>
 <body>
 <div class="well">
-    <svg style="width: 500px; height: 500px; border: 1px lightgray solid;"></svg>
+    <div><svg style="width: 500px; height: 500px; border: 1px lightgray solid;"></svg></div>
+    <button class="btn btn-primary tweets">Tweets</button>
+    <button class="btn btn-success retweets">Retweets</button>
+    <button class="btn btn-danger favorites">Favorites</button>
 </div>
-<style>
-	rect{
-		fill : darkred;
-	}
-</style>
 <script type="text/javascript">
            var tweets = d3.json("data/tweets.json", pie);
+           var pieChart = d3.layout.pie();
+           var nestedTweets;
+
+           var newArc = d3.svg.arc();
+             newArc.outerRadius(100);
+
+             //Making a donut:
+             newArc.innerRadius(60);
+
+             //By default data-binding key is an array position. Don't need this. 
+             pieChart.sort(null);
 
            function pie(data){
             var tweets = data.tweets;
 
             console.log(tweets);
 
-            var nestedTweets = d3.nest()
+            initControls();
+
+            nestedTweets = d3.nest()
               .key(function(el){return el.user;})
               .entries(tweets);
 
@@ -43,9 +54,6 @@
 
             });  
 
-
-             var pieChart = d3.layout.pie();
-
              //Defining accessor function so that the layout knows how to get data:
              pieChart.value(function(d){
               return d.numTweets;
@@ -54,12 +62,6 @@
              var myPie = pieChart(nestedTweets);
 
              console.log(myPie);
-
-             var newArc = d3.svg.arc();
-             newArc.outerRadius(100);
-
-             //Making a donut:
-             newArc.innerRadius(60);
 
              console.log(newArc(myPie[0]));
 
@@ -88,6 +90,41 @@
                 .style("opacity", .5)
                 .style("stroke", "darkgray")
                 .style("stroke-width", "2px");
+           }
+
+           function renderFavorites(){
+              pieChart.value(function(d){
+                return d.numFavorites;
+              });
+
+              animateDonut();
+           }
+
+           function renderTweets(){
+              pieChart.value(function(d){
+                return d.numTweets;
+              });
+
+              animateDonut();
+           }
+
+           function renderRetweets(){
+              pieChart.value(function(d){
+                return d.numRetweets;
+              });
+
+              animateDonut();
+           }
+
+           function animateDonut(){
+              d3.selectAll("path").data(pieChart(nestedTweets))
+                .transition().duration(1000).attr("d", newArc);
+           }
+
+           function initControls(){
+              d3.select("button.tweets").on("click", renderTweets);
+              d3.select("button.retweets").on("click", renderRetweets);
+              d3.select("button.favorites").on("click", renderFavorites);
            }
 
 	</script>
