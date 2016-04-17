@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>D3.js</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.js"></script>
+    <!--<link rel="stylesheet" type="text/css" href="css/d3ia.css">-->
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/chart.css">
+</head>
+<body>
+<div class="well">
+    <div><svg style="width: 500px; height: 500px; border: 1px lightgray solid;"></svg></div>
+</div>
+<script type="text/javascript">
+           var nestedTweets;
+
+           d3.json("data/tweets.json", dendroChart);
+           
+
+           function dendroChart(data){
+            var tweets = data.tweets;
+
+            nestedTweets = d3.nest()
+              .key(function(el){return el.user;})
+              .entries(tweets);
+
+            var packableTweets = {id: "All tweets", values: nestedTweets};  
+            
+            //Color scaling for differentiating between packs
+            var depthScale = d3.scale.category10([0,1,2]);
+
+           var treeChart = d3.layout.tree();
+
+           treeChart.size([500, 500])
+            .children(function(d){ return d.values});
+
+            var linkGenerator = d3.svg.diagonal();
+
+            d3.select("svg")
+              .append("g")
+              .attr("id", "treeG")
+              .selectAll("g")
+              .data(treeChart(packableTweets))
+              .enter()
+              .append("g")
+              .attr("class", "node")
+              .attr("transform", function(d){
+                return "translate(" + d.x + "," + d.y + ")";
+              });
+
+            d3.selectAll("g.node")
+              .append("circle")
+              .attr("r", 10)
+              .style("fill", function(d){return depthScale(d.depth)})
+              .style("stroke", "white")
+              .style("stroke-width", "2px");
+
+            d3.selectAll("g.node")
+              .append("text")
+              .text(function(d){
+                return d.id || d.key || d.content;
+              })  
+
+            d3.select("#treeG")
+                .selectAll("path")
+                .data(treeChart.links(treeChart(packableTweets)))
+                .enter().insert("path", "g")
+                .attr("d", linkGenerator)
+                .style("fill", "none")
+                .style("stroke", "black")
+                .style("stroke-width", "2px");
+
+
+
+           }
+	</script>
+</body>
+</html>

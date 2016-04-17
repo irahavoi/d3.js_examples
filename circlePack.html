@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>D3.js</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.js"></script>
+    <!--<link rel="stylesheet" type="text/css" href="css/d3ia.css">-->
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/chart.css">
+</head>
+<body>
+<div class="well">
+    <div><svg style="width: 500px; height: 500px; border: 1px lightgray solid;"></svg></div>
+</div>
+<script type="text/javascript">
+           var nestedTweets;
+
+           d3.json("data/tweets.json", circlePack);
+           
+
+           function circlePack(data){
+            var tweets = data.tweets;
+
+            nestedTweets = d3.nest()
+              .key(function(el){return el.user;})
+              .entries(tweets);
+
+            var packableTweets = {id: "All tweets", values: nestedTweets};  
+            
+            //Color scaling for differentiating between packs
+            var depthScale = d3.scale.category10([0,1,2]);
+
+            var packChart = d3.layout.pack();
+
+            packChart.size([500,500])
+              //Overriding children accessor function
+              .children(function(d){
+                return d.values;
+              })
+              .value(function(d){
+                return 1;
+              });
+
+            d3.select("svg")
+              .selectAll("circle")
+              .data(packChart(packableTweets))
+              .enter()
+              .append("circle")
+              .attr("r", function(d){return d.r - (d.depth * 10);})
+              .attr("cx", function(d){return d.x})
+              .attr("cy", function(d){return d.y})
+              .style("fill", function(d){return depthScale(d.depth)})
+              .style("stroke", "black")
+              .style("stroke-witdh", "2px");   
+           }
+	</script>
+</body>
+</html>
