@@ -34,7 +34,21 @@
            treeChart.size([500, 500])
             .children(function(d){ return d.values});
 
+            var treeZoom = d3.behavior.zoom();
+            treeZoom.on("zoom", zoomed);
+            d3.select("svg").call(treeZoom);
+
+
+            function zoomed(){
+              console.log("zoomzoom");
+              var zoomTranslate = treeZoom.translate();
+              d3.select("#treeG")
+                .attr("transform", "translate(" + zoomTranslate[0] + "," + zoomTranslate[1] + ")");
+            }
+
             var linkGenerator = d3.svg.diagonal();
+
+            linkGenerator.projection(function(d){return [d.y, d.x]});
 
             d3.select("svg")
               .append("g")
@@ -45,7 +59,7 @@
               .append("g")
               .attr("class", "node")
               .attr("transform", function(d){
-                return "translate(" + d.x + "," + d.y + ")";
+                return "translate(" + d.y + "," + d.x + ")";
               });
 
             d3.selectAll("g.node")
