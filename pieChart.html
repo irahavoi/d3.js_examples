@@ -17,41 +17,78 @@
 	}
 </style>
 <script type="text/javascript">
-           var pieChart = d3.layout.pie();
-           var myPie = pieChart([3,3,3]);
+           var tweets = d3.json("data/tweets.json", pie);
 
-           console.log(myPie);
+           function pie(data){
+            var tweets = data.tweets;
 
-           var newArc = d3.svg.arc();
-           newArc.outerRadius(100);
-           console.log(newArc(myPie[0]));
+            console.log(tweets);
 
-           d3.select("svg")
-              .append("g")
-              .attr("transform", "translate(250, 250)")
-              .selectAll("path")
-              .data(myPie)
-              .enter()
-              .append("path")
-              .attr("d", newArc)
-              .style("fill", function(d,i){
-                var color;
+            var nestedTweets = d3.nest()
+              .key(function(el){return el.user;})
+              .entries(tweets);
 
-                switch(i){
-                  case 0: color = "darkgreen";
-                  break;
-                  case 1: color = "darkred";
-                  break;
-                  case 2: color = "darkblue";
-                  break;
-                }
+            console.log("Nested tweets: ");
+            console.log(nestedTweets);
 
-                return color;
-              })
-              .style("opacity", .5)
-              .style("stroke", "darkgray")
-              .style("stroke-width", "2px");
-           
+            nestedTweets.forEach(function(el){
+              el.numTweets = el.values.length;
+              el.numFavorites = d3.sum(el.values, function(d){
+                return d.favorites.length;
+              });
+
+              el.numRetweets = d3.sum(el.values, function(d){
+                return d.retweets.length;
+              });
+
+            });  
+
+
+             var pieChart = d3.layout.pie();
+
+             //Defining accessor function so that the layout knows how to get data:
+             pieChart.value(function(d){
+              return d.numTweets;
+             });
+
+             var myPie = pieChart(nestedTweets);
+
+             console.log(myPie);
+
+             var newArc = d3.svg.arc();
+             newArc.outerRadius(100);
+
+             //Making a donut:
+             newArc.innerRadius(60);
+
+             console.log(newArc(myPie[0]));
+
+             d3.select("svg")
+                .append("g")
+                .attr("transform", "translate(250, 250)")
+                .selectAll("path")
+                .data(myPie)
+                .enter()
+                .append("path")
+                .attr("d", newArc)
+                .style("fill", function(d,i){
+                  var color = "orange";
+
+                  switch(i){
+                    case 0: color = "darkgreen";
+                    break;
+                    case 1: color = "darkred";
+                    break;
+                    case 2: color = "darkblue";
+                    break;
+                  }
+
+                  return color;
+                })
+                .style("opacity", .5)
+                .style("stroke", "darkgray")
+                .style("stroke-width", "2px");
+           }
 
 	</script>
 </body>
