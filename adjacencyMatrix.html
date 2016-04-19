@@ -2,7 +2,8 @@
 <html>
 <head>
     <title>D3.js</title>
-    <script type="text/javascript" src="http://d3js.org/d3.v4.0.0-alpha.26.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.16/d3.js"></script>
+    <script src="http://d3js.org/queue.v1.min.js"></script>
     <!--<link rel="stylesheet" type="text/css" href="css/d3ia.css">-->
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="css/network.css">
@@ -13,7 +14,7 @@
 </div>
 <script type="text/javascript">
            function adjacency(){
-              d3.queue()
+              queue()
                 .defer(d3.csv, "data/nodelist.csv")
                 .defer(d3.csv, "data/edgelist.csv")
                 .await(function(error, file1, file2){
@@ -46,12 +47,12 @@
                   weight: 0
                 };
 
+                console.log(grid.id);
                 if(edgeHash[grid.id]){
                   console.log('match!');
                   grid.weight = edgeHash[grid.id].weight;
                 }
 
-                console.log(grid);
                 matrix.push(grid);
 
               }
@@ -66,19 +67,19 @@
               .selectAll("rect")
               .data(matrix)
               .enter()
-              .append("grid")
+              .append("rect")
               .attr("class", "grid")
               .attr("width", 25)
               .attr("height", 25)
               .attr("x", function(d){return d.x * 25;})
-              .attr("y", function(d){return d.x * 25;})
+              .attr("y", function(d){return d.y * 25;})
               .style("fill-opacity", function(d){return d.weight * .2;});
 
             var scaleSize  = nodes.length * 25;
             
-            var nameScale = d3.scaleOrdinal()
+            var nameScale = d3.scale.ordinal()
               .domain(nodes.map(function(el){
-                return el.id
+                return el.id;
               }))
               .rangePoints([0, scaleSize], 1);  
 
@@ -86,10 +87,24 @@
             var xAxis = d3.svg.axis()
               .scale(nameScale).orient("top").tickSize(4);
 
-            d3.select("#adjacenceG").append("g").call(xAxis);    
+            var yAxis = d3.svg.axis()
+              .scale(nameScale).orient("left").tickSize(4);
 
 
+            d3.select("#adjacencyG").append("g").call(yAxis)  
 
+            d3.select("#adjacencyG").append("g").call(xAxis)
+              .selectAll("text")
+              .style("text-anchor", "end")
+              .attr("transform", "translate(-10,-10) rotate(90) ");
+
+
+            d3.selectAll("rect.grid").on("mouseover", gridOver);  
+           }
+
+           function gridOver(d,i){
+            d3.selectAll("rect")
+            .style("stroke-width", function(p){return p.x == d.x || p.y == d.y ? "3px" : "1px";})
            }
 
 
