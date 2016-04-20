@@ -23,7 +23,29 @@
            }
 
            function createForceDirectedNetwork(nodes, edges){
-            console.log("todo");
+            var nodeHash = {};
+            for(x in nodes){
+              nodeHash[nodes[x].id] = nodes[x];
+            }
+
+            for(x in edges){
+              edges[x].weight = parseInt(edges[x].weight);
+              edges[x].source = nodeHash[edges[x].source];
+              edges[x].target = nodeHash[edges[x].target];
+            }
+
+            var weightScale = d3.scale.linear()
+              .domain(d3.extent(edges, function(d){return d.weight}))
+              .range([.1, 1]);
+
+            var force = d3.layoout.force().charge(-1000)
+              .size([500, 500])
+              .nodes(nodes)
+              .links(edges)
+              .on("tick", forceTick);
+
+            //todo:    
+
            }
 
 
