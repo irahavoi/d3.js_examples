@@ -11,8 +11,22 @@
 <body onload="forceDirectedNetwork()">
 <div class="well">
     <div><svg style="width: 500px; height: 500px; border: 1px lightgray solid;"></svg></div>
+    <div id="controls">
 </div>
 <script type="text/javascript">
+          var force;
+          var marker = d3.select("svg").append('defs')
+            .append("marker")
+            .attr("id", "Triangle")
+            .attr("refX", 12)
+            .attr("refY", 6)
+            .attr("markerUnits", 'userSpaceOnUse')
+            .attr("markerWidth", 12)
+            .attr("markerHeight", 18)
+            .attr("orient", 'auto')
+            .append("path")
+            .attr("d", 'M 0 0 12 6 0 12 3 6');
+
            function forceDirectedNetwork(){
               queue()
                 .defer(d3.csv, "data/nodelist.csv")
@@ -39,7 +53,7 @@
               .domain(d3.extent(edges, function(d){return d.weight}))
               .range([.1, 1]);
 
-            var force = d3.layout.force().charge(-1000)
+            force = d3.layout.force().charge(-1000)
               .size([500, 500])
               .nodes(nodes)
               .links(edges)
@@ -55,6 +69,14 @@
               .style("stroke", "black")
               .style("opacity", .5)
               .style("stroke-width", function(d){return d.weight;});
+
+            d3.selectAll("line").attr("marker-end", "url(#Triangle)");  
+
+            d3.select("#controls")
+              .append("button")
+              .attr("class", "btn btn-success")
+              .on("click", sizeByDegree)
+              .html("Degree Size");
 
 
            var nodeEnter = d3.select("svg").selectAll("g.node")
@@ -95,6 +117,14 @@
                 .attr("transform", function(d){
                   return "translate(" + d.x + "," + d.y +")";
                 })  
+           }
+
+           function sizeByDegree(){
+            force.stop();
+            d3.selectAll("circle")
+              .attr("r", function(d){return d.weight * 2;})
+
+            force.resume();  
            }
 
 
