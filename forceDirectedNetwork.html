@@ -86,8 +86,8 @@
             .attr("class", "node");
 
             nodeEnter.append("circle")
-              .attr("r", 5)
-              .style("fill", "lightgray")
+              .attr("r", 10)
+              .style("fill", "orange")
               .style("stroke", "black")
               .style("stroke-width", "1px");
 
@@ -103,7 +103,8 @@
 
 
             force.start();   
-            d3.selectAll("g.node").call(force.drag())
+            d3.selectAll("g.node").call(force.drag());
+            d3.selectAll("g.node").on("click", toggleFixNode);
 
            }
 
@@ -123,9 +124,34 @@
            function sizeByDegree(){
             force.stop();
             d3.selectAll("circle")
-              .attr("r", function(d){return d.weight * 2;})
+              .attr("r", function(d){return d.weight * 4;})
 
             force.resume();  
+           }
+
+           function toggleFixNode(d){
+            if(d.fixed){
+              unfixNode(d, this);
+            } else{
+              fixNode(d, this);
+            }
+           }
+
+           function unfixNode(d, node){
+              console.log("unfixing node");
+              d3.select(node).select("circle")
+                .style("stroke-width", 1)
+                .style("fill", "orange");
+
+              d.fixed = false;  
+           }
+
+           function fixNode(d, node){
+              console.log("fixing node")
+              d3.select(node).select("circle")
+                .style("stroke-width", 4)
+                .style("fill", "blue");
+                d.fixed = true;
            }
 
 
