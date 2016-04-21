@@ -25,11 +25,12 @@
            function createForceDirectedNetwork(nodes, edges){
             var nodeHash = {};
             for(x in nodes){
+              console.log(nodes[x].id)
               nodeHash[nodes[x].id] = nodes[x];
             }
 
             for(x in edges){
-              edges[x].weight = parseInt(edges[x].weight);
+              edges[x].weight = parseInt(x.weight);
               edges[x].source = nodeHash[edges[x].source];
               edges[x].target = nodeHash[edges[x].target];
             }
@@ -45,21 +46,55 @@
               .on("tick", forceTick);
 
             d3.select("svg").selectAll("line.link")
-              //.data(edges, function(d){
-              //  return d.source.id + "-" +d.target.id ;
-              //})
-              .data(edges)
+              .data(edges, function(d){
+                return d.source.id + "-" +d.target.id ;
+              })
               .enter()
               .append("line")
               .attr("class", "link")
               .style("stroke", "black")
               .style("opacity", .5)
-              .style("stroke-width", function(d){return d.weight;});    
+              .style("stroke-width", function(d){return d.weight;});
+
+
+           var nodeEnter = d3.select("svg").selectAll("g.node")
+            .data(nodes, function(d){return d.id;})
+            .enter()
+            .append("g")
+            .attr("class", "node");
+
+            nodeEnter.append("circle")
+              .attr("r", 5)
+              .style("fill", "lightgray")
+              .style("stroke", "black")
+              .style("stroke-width", "1px");
+
+            nodeEnter.append("text")
+              .style("text-anchor", "middle")
+              .attr("y", 15)
+              .text(function(d){return d.id;});
+
+
+
+
+
+
+
+            force.start();   
 
            }
 
            function forceTick(){
-              console.log("todo");
+              d3.selectAll("line.link")
+                .attr("x1", function(d){return d.source.x})
+                .attr("x2", function(d){return d.target.x})
+                .attr("y1", function(d){return d.source.y})
+                .attr("y2", function(d){return d.target.y})
+
+              d3.selectAll("g.node")
+                .attr("transform", function(d){
+                  return "translate(" + d.x + "," + d.y +")";
+                })  
            }
 
 
