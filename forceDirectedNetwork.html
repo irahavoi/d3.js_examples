@@ -85,6 +85,14 @@
               .html("Show Most Influential Only");  
 
 
+
+            d3.select("#controls")
+              .append("button")
+              .attr("class", "btn btn-primary")
+              .on("click", addEdge)
+              .html("Add Link Between 2 Nodes");   
+
+
            var nodeEnter = d3.select("svg").selectAll("g.node")
             .data(nodes, function(d){return d.id;})
             .enter()
@@ -194,9 +202,41 @@
               force.nodes(influentialNodes).links(influentialLinks);
               force.start();
 
+           }
 
-                
+           function addEdge(){
+              var fixedNodes = d3.selectAll("g.node")[0].filter(function(d){return d.__data__.fixed;});
 
+
+               if(fixedNodes.length != 2){
+                alert("Please, select exactly 2 nodes for adding an edge! :)")
+               } else{
+                force.stop();
+                var fixedNotesData = fixedNodes.map(function(d){return d.__data__});
+
+                var oldEdges = force.links();
+                var nodes = force.nodes();
+
+                var newEdge = {source: fixedNotesData[0], target: fixedNotesData[1], weight: 5};
+
+                oldEdges.push(newEdge);
+
+                force.links(oldEdges);
+
+                d3.select("svg").selectAll("lline.link")
+                    .data(oldEdges, function(d,i){
+                      return d.source.id + "-" + d.target.id;
+                    })
+                    .enter()
+                    .insert("line", "g.node")
+                    .attr("class", "link")
+                    .style("stroke", "black")
+                    .style("stroke-width", 1)
+                    .attr("marker-end", "url(#Triangle");
+
+                 force.start();   
+
+               }
 
            }
 
