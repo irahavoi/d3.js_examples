@@ -50,11 +50,45 @@ function createSpreadSheet(incData){
 		.html(function(d){return d.value})
 		.style("left", function(d,i){
 			return (i * 100) + "px";
-		})
+		});
+
+	d3.select("#traditional")
+		.insert("button", ".table")
+		.attr("class", " btn btn-success")
+		.on("click", sortSheet).html("Sort");
+
+	d3.select("#traditional")
+		.insert("button", ".table")
+		.attr("class", " btn btn-primary")
+		.on("click", restoreSheet).html("Restore")	
+
 
 
 		
 }
+
+function sortSheet(){
+	var dataset = d3.selectAll("div.datarow").data();
+	dataset.sort(function(a,b){
+		var a = new Date(a.timestamp);
+		var b = new Date(b.timestamp);
+
+		return a > b ? 1 : (a < b ? -1 : 0);
+	});
+
+	d3.selectAll("div.datarow")
+		.data(dataset, function(d){return d.content})
+		.transition()
+		.duration(2000)
+		.style("top", function(d,i){return (40 + (i * 40)) + "px"});
+}
+
+function restoreSheet(){
+	d3.selectAll("div.datarow")
+		.duration(2000)
+		.style("top", function(d,i){return (40 + (i * 40)) + "px"});
+}
+
 </script>
 </body>
 </html>
