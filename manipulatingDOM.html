@@ -85,6 +85,7 @@ function sortSheet(){
 
 function restoreSheet(){
 	d3.selectAll("div.datarow")
+		.transition()
 		.duration(2000)
 		.style("top", function(d,i){return (40 + (i * 40)) + "px"});
 }
